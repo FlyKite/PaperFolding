@@ -99,7 +99,7 @@ extension UIView {
             anchorPoint = CGPoint(x: 0.5, y: 1)
         }
         
-        UIGraphicsBeginImageContext(view.frame.size)
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, UIScreen.main.scale)
         view.layer.render(in: UIGraphicsGetCurrentContext()!)
         let viewSnapShot = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -200,14 +200,14 @@ extension UIView {
         var openAnimation: CAKeyframeAnimation!
         if direction.rawValue < 2 {
             openAnimation = CAKeyframeAnimation.animationWith(keyPath: "position.x",
-                                                               function: openFunction,
-                                                               fromValue: self.frame.origin.x + self.frame.size.width / 2,
-                                                               toValue: selfFrame.origin.x + self.frame.size.width / 2)
+                                                              function: openFunction,
+                                                              fromValue: self.frame.origin.x + self.frame.size.width / 2,
+                                                              toValue: selfFrame.origin.x + self.frame.size.width / 2)
         } else {
             openAnimation = CAKeyframeAnimation.animationWith(keyPath: "position.y",
-                                                               function: openFunction,
-                                                               fromValue: self.frame.origin.y + self.frame.size.height / 2,
-                                                               toValue: selfFrame.origin.y + self.frame.size.height / 2)
+                                                              function: openFunction,
+                                                              fromValue: self.frame.origin.y + self.frame.size.height / 2,
+                                                              toValue: selfFrame.origin.y + self.frame.size.height / 2)
         }
         openAnimation.fillMode = kCAFillModeForwards
         openAnimation.isRemovedOnCompletion = false
@@ -239,7 +239,7 @@ extension UIView {
             anchorPoint = CGPoint(x: 0.5, y: 1)
         }
         
-        UIGraphicsBeginImageContext(view.frame.size)
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, UIScreen.main.scale)
         view.layer.render(in: UIGraphicsGetCurrentContext()!)
         let viewSnapShot = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -339,14 +339,14 @@ extension UIView {
         var openAnimation: CAKeyframeAnimation!
         if direction.rawValue < 2 {
             openAnimation = CAKeyframeAnimation.animationWith(keyPath: "position.x",
-                                                               function: closeFunction,
-                                                               fromValue: self.frame.origin.x + self.frame.size.width / 2,
-                                                               toValue: selfFrame.origin.x + self.frame.size.width / 2)
+                                                              function: closeFunction,
+                                                              fromValue: self.frame.origin.x + self.frame.size.width / 2,
+                                                              toValue: selfFrame.origin.x + self.frame.size.width / 2)
         } else {
             openAnimation = CAKeyframeAnimation.animationWith(keyPath: "position.y",
-                                                               function: closeFunction,
-                                                               fromValue: self.frame.origin.y + self.frame.size.height / 2,
-                                                               toValue: selfFrame.origin.y + self.frame.size.height / 2)
+                                                              function: closeFunction,
+                                                              fromValue: self.frame.origin.y + self.frame.size.height / 2,
+                                                              toValue: selfFrame.origin.y + self.frame.size.height / 2)
         }
         openAnimation.fillMode = kCAFillModeForwards
         openAnimation.isRemovedOnCompletion = false
@@ -382,7 +382,11 @@ extension UIView {
             imageLayer.anchorPoint = anchorPoint
             imageLayer.position = CGPoint(x: layerWidth * anchorPoint.x, y: frame.size.height / 2)
             jointLayer.addSublayer(imageLayer)
-            let imageCrop = image.cgImage?.cropping(to: frame)
+            let scaledFrame = CGRect(x: frame.origin.x * image.scale,
+                                     y: frame.origin.y * image.scale,
+                                     width: frame.size.width * image.scale,
+                                     height: frame.size.height * image.scale)
+            let imageCrop = image.cgImage?.cropping(to: scaledFrame)
             imageLayer.contents = imageCrop
             imageLayer.backgroundColor = UIColor.clear.cgColor
             
@@ -422,7 +426,11 @@ extension UIView {
             imageLayer.anchorPoint = anchorPoint
             imageLayer.position = CGPoint(x: frame.size.width/2, y: layerHeight*anchorPoint.y)
             jointLayer.addSublayer(imageLayer)
-            let imageCrop = image.cgImage?.cropping(to: frame)
+            let scaledFrame = CGRect(x: frame.origin.x * image.scale,
+                                     y: frame.origin.y * image.scale,
+                                     width: frame.size.width * image.scale,
+                                     height: frame.size.height * image.scale)
+            let imageCrop = image.cgImage?.cropping(to: scaledFrame)
             imageLayer.contents = imageCrop
             imageLayer.backgroundColor = UIColor.clear.cgColor
             
@@ -432,7 +440,7 @@ extension UIView {
             shadowLayer.backgroundColor = UIColor.darkGray.cgColor
             shadowLayer.opacity = 0.0
             shadowLayer.colors = [UIColor.black.cgColor, UIColor.clear.cgColor]
-
+            
             if index % 2 != 0 {
                 shadowLayer.startPoint = CGPoint(x: 0.5, y: 0)
                 shadowLayer.endPoint = CGPoint(x: 0.5, y: 1)
@@ -462,7 +470,7 @@ extension UIView {
         shadowLayer.add(animation, forKey: nil)
         
         return jointLayer
-
+        
     }
     
 }
